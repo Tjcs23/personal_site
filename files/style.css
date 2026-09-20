@@ -1,0 +1,792 @@
+/* ==========================================================================
+   Wren Ashcombe — personal site stylesheet
+   --------------------------------------------------------------------------
+   Structure of this file:
+     1. Design tokens (colors, type, spacing)
+     2. Reset & base element styles
+     3. Layout helpers (container, page grid)
+     4. Navigation
+     5. Buttons & links
+     6. Hero (home page)
+     7. Book-spine cards (home page wayfinding)
+     8. "Currently" ledger (home page)
+     9. Manuscript cards (blog listing)
+     10. Single post / drop cap
+     11. Cabinet cards (projects)
+     12. Ex Libris spread (about page)
+     13. Footer
+     14. Decorative bits (dividers, seals, constellation)
+     15. Responsive
+     16. Accessibility & motion
+   ========================================================================== */
+
+/* -------------------- 1. Design tokens -------------------- */
+:root {
+  /* Core palette — see README for the full design rationale */
+  --ink: #15110c;            /* main background — warm near-black */
+  --ink-soft: #1e1810;       /* elevated dark surfaces (cards, mobile nav) */
+  --ink-line: #362c1d;       /* hairline borders on dark surfaces */
+
+  --paper: #f2e8d3;          /* "lit page" surfaces — blog cards, post body */
+  --paper-soft: #e8dbbd;     /* slightly deeper paper, for insets */
+  --ink-text: #241d14;       /* body text on paper surfaces */
+
+  --parchment: #eadfc4;      /* headings/body text on dark surfaces */
+  --parchment-dim: #b7a67e;  /* secondary/meta text on dark surfaces */
+
+  --oxblood: #a1504c;        /* accent on dark surfaces — links, seals */
+  --oxblood-bright: #c26661; /* hover/focus state on dark surfaces */
+  --oxblood-deep: #6e2b2b;   /* accent on paper surfaces (darker, for contrast) */
+
+  --gold: #b8934f;           /* hairlines, borders, flourishes */
+  --gold-bright: #d3ac66;    /* hover state for gold elements */
+
+  --forest: #55684a;         /* secondary accent — tag dots, hover fills */
+  --forest-bright: #6d8360;
+
+  --shadow: rgba(0, 0, 0, 0.45);
+
+  /* Type */
+  --font-display: 'Cinzel', 'Times New Roman', serif;
+  --font-body: 'EB Garamond', 'Iowan Old Style', Georgia, serif;
+
+  /* Layout */
+  --container: 1120px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius: 2px; /* deliberately near-square — see README */
+}
+
+/* -------------------- 2. Reset & base -------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 0.6em;
+  letter-spacing: 0.01em;
+}
+
+h1 { font-size: clamp(2.5rem, 5.5vw, 4.25rem); }
+h2 { font-size: clamp(1.75rem, 3.2vw, 2.5rem); }
+h3 { font-size: 1.3rem; }
+
+p {
+  margin: 0 0 1.1em;
+}
+
+.prose {
+  max-width: 66ch;
+}
+
+ul, ol {
+  padding-left: 1.2em;
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible,
+.spine:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+}
+
+/* -------------------- 3. Layout helpers -------------------- */
+.container {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.page-head {
+  padding: 7rem 0 3rem;
+}
+
+.page-head .eyebrow-mark {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+}
+
+.page-head p {
+  color: var(--parchment-dim);
+  max-width: 56ch;
+}
+
+section {
+  padding: 3.5rem 0;
+}
+
+/* -------------------- 4. Navigation -------------------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(21, 17, 12, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.site-nav .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  font-family: var(--font-display);
+  color: var(--parchment);
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+}
+
+.brand-mark {
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  position: relative;
+  text-decoration: none;
+  font-size: 0.98rem;
+  color: var(--parchment-dim);
+  padding-bottom: 0.3rem;
+  transition: color 0.2s ease;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  bottom: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: left 0.25s ease, right 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible,
+.nav-links a.is-active {
+  color: var(--parchment);
+}
+
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after,
+.nav-links a.is-active::after {
+  left: 0;
+  right: 0;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--ink-line);
+  color: var(--parchment);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.nav-toggle span,
+.nav-toggle span::before,
+.nav-toggle span::after {
+  content: '';
+  display: block;
+  width: 1.1rem;
+  height: 1px;
+  background: var(--parchment);
+  margin: 0 auto;
+  position: relative;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav-toggle span::before { position: absolute; top: -6px; width: 1.1rem; }
+.nav-toggle span::after { position: absolute; top: 6px; width: 1.1rem; }
+
+/* -------------------- 5. Buttons & links -------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.4rem;
+  border: 1px solid var(--gold);
+  color: var(--parchment);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border-radius: var(--radius);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.text-link {
+  color: var(--oxblood-bright);
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
+
+.text-link:hover { color: var(--gold-bright); }
+
+/* -------------------- 6. Hero -------------------- */
+.hero {
+  position: relative;
+  padding: 6.5rem 0 4rem;
+  overflow: hidden;
+}
+
+.hero .container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.hero-mark {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 14vw, 8.5rem);
+  color: var(--oxblood);
+  line-height: 0.8;
+  float: left;
+  margin: 0.05em 0.15em 0 0;
+  padding: 0.15em 0.22em;
+  border: 1px solid var(--gold);
+  position: relative;
+}
+
+.hero-mark::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(184, 147, 79, 0.4);
+  pointer-events: none;
+}
+
+.hero h1 {
+  margin-bottom: 0.3em;
+}
+
+.hero .tagline {
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--parchment-dim);
+  font-size: 1.25rem;
+  margin-bottom: 1.4rem;
+}
+
+.hero-bio {
+  clear: both;
+  max-width: 62ch;
+  color: var(--parchment-dim);
+  font-size: 1.08rem;
+  padding-top: 1.5rem;
+}
+
+/* subtle single glow, decorative only — disabled under reduced motion */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 8%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(184, 147, 79, 0.16), transparent 70%);
+  animation: flicker 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* -------------------- 7. Book-spine cards -------------------- */
+.shelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+.spine {
+  --tilt: 0deg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--parchment);
+  padding: 1.6rem 0.85rem;
+  min-height: 15rem;
+  border: 1px solid var(--ink-line);
+  border-top: 3px solid var(--spine-accent, var(--gold));
+  background: var(--ink-soft);
+  transform: rotate(var(--tilt));
+  transform-origin: bottom center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: -6px 0 0 -4px var(--ink-line);
+}
+
+.spine:nth-child(1) { --tilt: -2.5deg; --spine-accent: var(--oxblood); }
+.spine:nth-child(2) { --tilt: 1.5deg; --spine-accent: var(--gold); min-height: 16.5rem; }
+.spine:nth-child(3) { --tilt: -1deg; --spine-accent: var(--forest); }
+
+.spine:hover,
+.spine:focus-visible {
+  transform: rotate(0deg) translateY(-6px);
+  border-color: var(--gold);
+}
+
+.spine span {
+  display: block;
+}
+
+.spine small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+  margin-top: 0.6em;
+}
+
+/* -------------------- 8. "Currently" ledger -------------------- */
+.ledger {
+  border-top: 1px solid var(--ink-line);
+  border-bottom: 1px solid var(--ink-line);
+  padding: 2.2rem 0;
+}
+
+.ledger-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2.5rem;
+}
+
+.ledger-item dt {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.ledger-item dd {
+  margin: 0;
+  color: var(--parchment);
+  font-size: 1.05rem;
+}
+
+/* -------------------- 9. Manuscript cards (blog list) -------------------- */
+.manuscript-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.manuscript-card {
+  background: var(--paper);
+  color: var(--ink-text);
+  border: 1px solid var(--paper-soft);
+  border-left: 4px solid var(--oxblood-deep);
+  padding: 1.8rem 2rem;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.manuscript-card:hover,
+.manuscript-card:focus-visible {
+  transform: translateX(4px);
+  box-shadow: -4px 0 0 var(--gold);
+}
+
+.manuscript-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--oxblood-deep);
+  margin-bottom: 0.6rem;
+}
+
+.seal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--forest);
+  flex-shrink: 0;
+}
+
+.manuscript-card h3 {
+  color: var(--ink-text);
+  margin-bottom: 0.5rem;
+}
+
+.manuscript-card p {
+  color: #4a4030;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* -------------------- 10. Single post / drop cap -------------------- */
+.post-body {
+  background: var(--paper);
+  color: var(--ink-text);
+  padding: clamp(2rem, 5vw, 3.5rem);
+  max-width: 72ch;
+  margin-inline: auto;
+}
+
+.post-body .lede::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.6rem;
+  color: var(--oxblood-deep);
+  float: left;
+  line-height: 0.8;
+  padding: 0.1em 0.12em 0 0;
+  margin-top: 0.1em;
+}
+
+.post-body h2 {
+  color: var(--ink-text);
+  font-size: 1.5rem;
+  margin-top: 1.6em;
+}
+
+.post-body p { color: #382e20; }
+
+.post-meta {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--oxblood-deep);
+  margin-bottom: 1.6rem;
+}
+
+/* -------------------- 11. Cabinet cards (projects) -------------------- */
+.cabinet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.6rem;
+}
+
+.cabinet-card {
+  position: relative;
+  background: var(--ink-soft);
+  border: 1px solid var(--ink-line);
+  padding: 1.9rem;
+}
+
+.cabinet-card::before,
+.cabinet-card::after,
+.cabinet-corner-a,
+.cabinet-corner-b {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--gold);
+  border-style: solid;
+  border-width: 0;
+}
+
+.cabinet-card::before { top: 6px; left: 6px; border-top-width: 1px; border-left-width: 1px; }
+.cabinet-card::after { top: 6px; right: 6px; border-top-width: 1px; border-right-width: 1px; }
+.cabinet-corner-a { bottom: 6px; left: 6px; border-bottom-width: 1px; border-left-width: 1px; }
+.cabinet-corner-b { bottom: 6px; right: 6px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.cabinet-card h3 {
+  color: var(--parchment);
+  margin-bottom: 0.5rem;
+}
+
+.cabinet-card p {
+  color: var(--parchment-dim);
+  font-size: 0.98rem;
+}
+
+.cabinet-status {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  background: var(--gold);
+  padding: 0.2rem 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ink-line);
+}
+
+.tag-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--parchment-dim);
+}
+
+.tag-row span::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--forest-bright);
+}
+
+/* -------------------- 12. Ex Libris spread (about page) -------------------- */
+.spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--paper);
+  color: var(--ink-text);
+  position: relative;
+  box-shadow: 0 20px 50px var(--shadow);
+}
+
+.spread::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  transform: translateX(-1px);
+}
+
+.spread-page {
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+
+.spread-page.left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.6rem;
+}
+
+.portrait-frame {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  border: 1px solid var(--oxblood-deep);
+  outline: 1px solid var(--gold);
+  outline-offset: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--oxblood-deep);
+  background: var(--paper-soft);
+}
+
+.spread-quote {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #4a4030;
+  border-left: 2px solid var(--gold);
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.spread-page.right h2 {
+  color: var(--ink-text);
+}
+
+.spread-page.right p {
+  color: #382e20;
+}
+
+.catalog {
+  list-style: none;
+  padding: 0;
+  margin: 1.6rem 0 0;
+  border-top: 1px solid var(--paper-soft);
+}
+
+.catalog li {
+  display: flex;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--paper-soft);
+  font-size: 0.98rem;
+}
+
+.catalog .call-number {
+  font-family: var(--font-display);
+  color: var(--oxblood-deep);
+  font-size: 0.85rem;
+  min-width: 4.5rem;
+  flex-shrink: 0;
+}
+
+/* -------------------- 13. Footer -------------------- */
+.site-footer {
+  border-top: 1px solid var(--ink-line);
+  padding: 3rem 0;
+  margin-top: 4rem;
+}
+
+.site-footer .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: var(--parchment-dim);
+  font-size: 0.92rem;
+}
+
+.footer-links a:hover { color: var(--gold-bright); }
+
+.footer-note {
+  color: var(--parchment-dim);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* -------------------- 14. Decorative bits -------------------- */
+.divider {
+  border: none;
+  border-top: 1px solid var(--ink-line);
+  width: 100%;
+  margin: 0;
+}
+
+.divider-flourish {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--gold);
+  margin: 0.5rem 0 2.5rem;
+}
+
+.divider-flourish::before,
+.divider-flourish::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--ink-line);
+}
+
+/* -------------------- 15. Responsive -------------------- */
+@media (max-width: 820px) {
+  .spread { grid-template-columns: 1fr; }
+  .spread::after { display: none; }
+  .spread-page.left {
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid var(--paper-soft);
+  }
+  .ledger-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  .nav-links {
+    position: absolute;
+    top: 4.5rem;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--ink-soft);
+    border-bottom: 1px solid var(--ink-line);
+    padding: 1rem var(--gutter) 1.5rem;
+    gap: 1rem;
+    display: none;
+  }
+  .nav-links.is-open { display: flex; }
+  .nav-toggle { display: block; }
+  .shelf { justify-content: center; }
+}
+
+/* -------------------- 16. Accessibility & motion -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero::before { animation: none; }
+  .spine, .manuscript-card, .nav-links a::after, .btn {
+    transition: none;
+  }
+}
